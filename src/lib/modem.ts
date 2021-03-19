@@ -7,18 +7,18 @@ import Requester from './requester';
 import URLBuilder from './url-builder';
 
 class Modem {
-  // Event emitter.
+  // Event emitter
   private emitter = new EventEmitter();
-  // xml builder.
+  // xml builder
   private xmlBuilder: xml2js.Builder = new xml2js.Builder();
-  // xml parser.
+  // xml parser
   private parser: xml2js.Parser = new xml2js.Parser();
-  // URLBuilder.
+  // URLBuilder
   private urlBuilder: URLBuilder;
-  // HTTP Requester.
+  // HTTP Requester
   private requester: Requester;
 
-  // Class constructor.
+  // Class constructor
   constructor(modemIp?: string) {
     // If no modem ip provided, use default.
     if (!modemIp) {
@@ -31,11 +31,6 @@ class Modem {
     // Requester instance.
     this.requester = new Requester({
       SessionInfoUrl: this.urlBuilder.make('webserver/SesTokInfo'),
-    });
-
-    // Set modem ready when requester emits its ready event.
-    this.requester.onReady(() => {
-      this.emitter.emit('ready', this);
     });
   }
 
