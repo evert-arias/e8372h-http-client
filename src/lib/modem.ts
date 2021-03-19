@@ -11,7 +11,7 @@ export interface ModemOptions {
   ussdTimeout?: number;
 }
 
-class Modem {
+export class Modem {
   // Event emitter
   private emitter = new EventEmitter();
   // xml builder
@@ -152,5 +152,3 @@ class Modem {
     });
   }
 }
-
-export default Modem;
