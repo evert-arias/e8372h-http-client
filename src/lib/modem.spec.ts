@@ -8,7 +8,7 @@ const data = {
   password: '120630',
 };
 
-const modem = new Modem(data.modemIp);
+const modem = new Modem({ modemIp: data.modemIp });
 
 // Initialize modem
 test.serial('init', async (t) => {
@@ -23,7 +23,7 @@ test.serial('login', async (t) => {
   t.pass();
 });
 
-// test.serial('ussd', async (t) => {
-//   const result: string = (await modem.ussd('*222#')) as string;
-//   t.is(result.startsWith('Saldo'), true);
-// });
+test.serial('ussd', async (t) => {
+  await modem.ussd('*222#');
+  t.pass();
+});
