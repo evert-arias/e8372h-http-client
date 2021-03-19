@@ -20,19 +20,10 @@ class Modem {
 
   // Class constructor.
   constructor(modemIp?: string) {
-    let useDefaultModemIp = false;
-
     // If no modem ip provided, use default.
     if (!modemIp) {
       modemIp = '192.168.1.1';
-      useDefaultModemIp = true;
     }
-
-    console.log(
-      `Initializing modem with IP: ${modemIp} ${
-        useDefaultModemIp ? '(Default)' : '(Provided)'
-      }`
-    );
 
     // URLBuilder instance.
     this.urlBuilder = new URLBuilder(modemIp);
