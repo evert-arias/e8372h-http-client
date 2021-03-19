@@ -10,15 +10,13 @@ export interface InitData {
   TokInfo: [string];
 }
 
-export default class Requester extends EventEmitter {
+export default class Requester {
   private sessionId = '';
   private token = '';
   private parser: xml2js.Parser = new xml2js.Parser();
 
   // Constructor
-  constructor(private options: { SessionInfoUrl: ModemURL }) {
-    super();
-  }
+  constructor(private options: { SessionInfoUrl: ModemURL }) {}
 
   // Build header
   private buildHeaders(header?: unknown) {
@@ -53,8 +51,6 @@ export default class Requester extends EventEmitter {
           this.sessionId = result.response.SesInfo[0];
           // extract token
           this.token = result.response.TokInfo[0];
-          // emit ready event
-          this.emit('ready');
           // resolve
           resolve();
         })
@@ -99,10 +95,5 @@ export default class Requester extends EventEmitter {
   // Get token
   public getToken() {
     return this.token;
-  }
-
-  // Register callback for onReady event
-  public onReady(cb: { (): void; (...args: unknown[]): void }) {
-    this.once('ready', cb);
   }
 }
