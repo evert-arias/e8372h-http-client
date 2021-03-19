@@ -6,6 +6,11 @@ import Identity from './identity';
 import Requester from './requester';
 import URLBuilder from './url-builder';
 
+export interface ModemOptions {
+  modemIp?: string;
+  ussdTimeout?: number;
+}
+
 class Modem {
   // Event emitter
   private emitter = new EventEmitter();
@@ -18,15 +23,22 @@ class Modem {
   // HTTP Requester
   private requester: Requester;
 
+  // Default
+  private DEFAULT_MODEM_IP = '192.168.1.1';
+  private DEFAULT_USSD_TIMEOUT = 3000;
+
   // Class constructor
-  constructor(modemIp?: string) {
-    // If no modem ip provided, use default.
-    if (!modemIp) {
-      modemIp = '192.168.1.1';
+  constructor(private options?: ModemOptions) {
+    // Load default options if necessary
+    if (!options.modemIp) {
+      options.modemIp = this.DEFAULT_MODEM_IP;
+    }
+    if (!options.ussdTimeout) {
+      options.ussdTimeout = this.DEFAULT_USSD_TIMEOUT;
     }
 
     // URLBuilder instance.
-    this.urlBuilder = new URLBuilder(modemIp);
+    this.urlBuilder = new URLBuilder(options.modemIp);
 
     // Requester instance.
     this.requester = new Requester({
@@ -96,13 +108,13 @@ class Modem {
   }
 
   // Execute ussd code
-  public async ussd(code: string): Promise<unknown> {
-    return new Promise((resolve, reject) => {
+  public async ussd(code: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
       // url to send ussd
-      const sendUssdUrl = this.urlBuilder.make('ussd/send');
+      const url_send = this.urlBuilder.make('ussd/send');
 
       // url to retrieve ussd result
-      const getUssdUrl = this.urlBuilder.make('ussd/get');
+      const url_get = this.urlBuilder.make('ussd/get');
 
       // most recent token
       const token = this.requester.getToken();
@@ -119,15 +131,20 @@ class Modem {
 
       // request
       this.requester
-        .postToUrl(sendUssdUrl, xml, header)
+        .postToUrl(url_send, xml, header)
         .then((result) => {
-          console.log(result);
-
-          setTimeout(async () => {
-            const final = await this.requester.getFromUrl(getUssdUrl);
-            console.log(final);
-            resolve(final);
-          }, 2000);
+          if (result['status'] != 200) {
+            reject('Modem did not responded to ussd request');
+          }
+          this.parser.parseStringPromise(result['data']).then((data) => {
+            if (!data.response && data.response !== 'OK') {
+              reject('Invalid USSD response from modem');
+            }
+            setTimeout(async () => {
+              const result = await this.requester.getFromUrl(url_get);
+              resolve(result.response.content[0]);
+            }, this.options.ussdTimeout);
+          });
         })
         .catch((err) => {
           reject(err);
