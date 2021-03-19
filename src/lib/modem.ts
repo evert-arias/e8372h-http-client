@@ -34,18 +34,29 @@ class Modem {
     });
   }
 
+  // Initialize modem
   public init() {
-    return this.requester.init();
+    return new Promise<void>((resolve, reject) => {
+      this.requester
+        .init()
+        .then(() => {
+          this.emitter.emit('ready');
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
 
-  // Add onReady event callback.
+  // Add onReady event callback
   public onReady(cb: () => void) {
     this.emitter.once('ready', cb);
   }
 
   // Login
-  public login(username: string, password: string) {
-    return new Promise<boolean>((resolve, reject) => {
+  public login(username: string, password: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       // login url
       const loginUrl = this.urlBuilder.make('user/login');
 
@@ -62,41 +73,35 @@ class Modem {
         token
       ).getLoginObjAsXml();
 
-      // login request
-      this.requester
-        .postToUrl(loginUrl, loginObj, header)
-        .then(async (result: unknown) => {
-          // Login fail if response status is not 200
-          if (result['status'] != 200) {
-            reject('An error has ocurred trying to login');
-          }
-
-          this.parser
-            .parseStringPromise(result['data'])
-            .then((data) => {
+      try {
+        // login request
+        this.requester
+          .postToUrl(loginUrl, loginObj, header)
+          .then(async (result) => {
+            // login fail if response status is not 200
+            if (result['status'] != 200) {
+              reject('Modem did not responded to login request');
+            }
+            this.parser.parseStringPromise(result['data']).then((data) => {
               if (!data.response && data.response !== 'OK') {
-                reject('Invalid username or password');
+                reject('Provided login data is not valid');
               }
-
-              resolve(true);
-            })
-            .catch((err) => {
-              reject(err);
+              resolve();
             });
-        })
-        .catch((err) => {
-          reject(err);
-        });
+          });
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
   // Execute ussd code
   public async ussd(code: string): Promise<unknown> {
     return new Promise((resolve, reject) => {
-      // url to send ussd to
+      // url to send ussd
       const sendUssdUrl = this.urlBuilder.make('ussd/send');
 
-      // url to retrieve ussd result from
+      // url to retrieve ussd result
       const getUssdUrl = this.urlBuilder.make('ussd/get');
 
       // most recent token
