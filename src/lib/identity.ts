@@ -12,7 +12,7 @@ export type LoginObj = {
 };
 
 /**
- * Identity class
+ * Identity
  */
 export default class Identity {
   private readonly xmlBuilder: xml2js.Builder = new xml2js.Builder();

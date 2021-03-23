@@ -7,7 +7,7 @@ const data = {
   username: 'admin',
   password: 'admin',
   token: 'example-token',
-  encryptedPassword:
+  expectedEncryptedPassword:
     'MDc2YTcxNzAxNGU4ZmY0NDg2MTJmZThmZjdhYzk1Zjg2MmEzODQ4ZmFiNTJhOGUyMzA1MDQ3NjNjYmQxMTgyMQ==',
 };
 
@@ -18,7 +18,7 @@ const identity = new Identity(data.username, data.password, data.token);
 test('getLoginObj', async (t) => {
   t.deepEqual(identity.getLoginObj(), {
     Username: data.username,
-    Password: data.encryptedPassword,
+    Password: data.expectedEncryptedPassword,
     password_type: 4,
   });
 });
@@ -30,7 +30,7 @@ test('getLoginObjAsXml', async (t) => {
     `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
   <Username>${data.username}</Username>
-  <Password>${data.encryptedPassword}</Password>
+  <Password>${data.expectedEncryptedPassword}</Password>
   <password_type>4</password_type>
 </root>`
   );
