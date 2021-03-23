@@ -1,5 +1,5 @@
 /**
- * ModemURL class
+ * ModemURL
  */
 export class ModemURL {
   constructor(private url: string) {}
@@ -9,7 +9,7 @@ export class ModemURL {
 }
 
 /**
- * URLBuilder class
+ * URLBuilder
  */
 export default class URLBuilder {
   constructor(private modemIp: string) {}
