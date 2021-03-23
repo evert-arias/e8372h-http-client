@@ -1,14 +1,11 @@
 import test from 'ava';
+import dotenv from 'dotenv';
 
-import Modem from './modem';
+import { Modem } from './modem';
 
-const data = {
-  modemIp: '192.168.1.1',
-  username: 'admin',
-  password: '120630',
-};
+dotenv.config();
 
-const modem = new Modem({ modemIp: data.modemIp });
+const modem = new Modem();
 
 // Initialize modem
 test.serial('init', async (t) => {
@@ -19,10 +16,20 @@ test.serial('init', async (t) => {
 
 // Login
 test.serial('login', async (t) => {
-  await modem.login(data.username, data.password);
+  if (!process.env.TEST_MODEM_USERNAME) {
+    t.fail('TEST_MODEM_USERNAME is missing');
+  }
+  if (!process.env.TEST_MODEM_PASSWORD) {
+    t.fail('TEST_MODEM_PASSWORD is missing');
+  }
+  await modem.login(
+    process.env.TEST_MODEM_USERNAME,
+    process.env.TEST_MODEM_PASSWORD
+  );
   t.pass();
 });
 
+// USSD request
 test.serial('ussd', async (t) => {
   await modem.ussd('*222#');
   t.pass();

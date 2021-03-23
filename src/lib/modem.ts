@@ -6,11 +6,17 @@ import Identity from './identity';
 import Requester from './requester';
 import URLBuilder from './url-builder';
 
+/**
+ * ModemOptions
+ */
 export interface ModemOptions {
   modemIp?: string;
   ussdTimeout?: number;
 }
 
+/**
+ * Modem
+ */
 export class Modem {
   // Event emitter
   private emitter = new EventEmitter();
@@ -22,23 +28,27 @@ export class Modem {
   private urlBuilder: URLBuilder;
   // HTTP Requester
   private requester: Requester;
+  // Options object
+  private options: ModemOptions = {};
 
   // Default
   private DEFAULT_MODEM_IP = '192.168.1.1';
   private DEFAULT_USSD_TIMEOUT = 3000;
 
   // Class constructor
-  constructor(private options?: ModemOptions) {
+  constructor(options?: ModemOptions) {
+    // Options
+    this.options = options || {};
     // Load default options if necessary
-    if (!options.modemIp) {
-      options.modemIp = this.DEFAULT_MODEM_IP;
+    if (!options || !options.modemIp) {
+      this.options.modemIp = this.DEFAULT_MODEM_IP;
     }
-    if (!options.ussdTimeout) {
-      options.ussdTimeout = this.DEFAULT_USSD_TIMEOUT;
+    if (!options || !options.ussdTimeout) {
+      this.options.ussdTimeout = this.DEFAULT_USSD_TIMEOUT;
     }
 
     // URLBuilder instance.
-    this.urlBuilder = new URLBuilder(options.modemIp);
+    this.urlBuilder = new URLBuilder(this.options.modemIp);
 
     // Requester instance.
     this.requester = new Requester({
