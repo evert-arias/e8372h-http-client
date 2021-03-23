@@ -3,11 +3,17 @@ import xml2js from 'xml2js';
 
 import { ModemURL } from './url-builder';
 
+/**
+ * InitData
+ */
 export interface InitData {
   SesInfo: [string];
   TokInfo: [string];
 }
 
+/**
+ * Requester
+ */
 export default class Requester {
   private sessionId = '';
   private token = '';
