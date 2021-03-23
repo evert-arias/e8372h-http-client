@@ -1,4 +1,4 @@
-import Base64 from 'js-base64';
+import { encode } from 'js-base64';
 import sha256 from 'js-sha256';
 import xml2js from 'xml2js';
 
@@ -27,7 +27,7 @@ export default class Identity {
   // Perform sha256 and base64 encode
   private b64_sha256(data: string) {
     const sha256sig = sha256.sha256(data);
-    return Base64.encode(sha256sig);
+    return encode(sha256sig);
   }
 
   // Make hashed password
