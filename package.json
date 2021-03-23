@@ -1,11 +1,11 @@
 {
-  "name": "modem-js",
+  "name": "e8372h-http-client",
   "version": "1.0.0-beta.1",
-  "description": "Typescript library to interact with some 3G/LTE modem via HTTP requests",
+  "description": "Typescript library to interact with Huawei E8372H 3G/LTE modem via HTTP requests.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/evert-arias/modem-js",
+  "repository": "https://github.com/evert-arias/e8372h-http-client",
   "license": "MIT",
   "keywords": [],
   "scripts": {
